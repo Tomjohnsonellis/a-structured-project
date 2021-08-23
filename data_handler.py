@@ -37,6 +37,12 @@ def setup_dataset(csv_path, bmi_precision=1, price_precision=2, verbose=0):
     if verbose:
         print(f"Dimensions:\nX_train:{X_train.shape}\ny_train:{y_train.shape}\n","="*50,f"\nX_test:{X_test.shape}\ny_test{y_test.shape}")
 
+    # Convert to tensors
+    X_train = torch.from_numpy(X_train).to(torch.float)
+    X_test = torch.from_numpy(X_test).to(torch.float)
+    y_train = torch.from_numpy(y_train).to(torch.float)
+    y_test = torch.from_numpy(y_test).to(torch.float)
+
     return  X_train, X_test, y_train, y_test
 
 

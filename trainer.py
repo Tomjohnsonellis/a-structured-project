@@ -6,4 +6,5 @@ X_train, X_test, y_train, y_test = setup_dataset("dataset/insurance.csv",verbose
 
 # Need to train and validate
 model = insurance_models.InsurancePriceNN([128, 64])
-print(model)
+test = model.forward(X_train[20])
+print(test)
