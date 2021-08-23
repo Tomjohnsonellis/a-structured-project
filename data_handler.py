@@ -40,13 +40,30 @@ def setup_dataset(csv_path, bmi_precision=1, price_precision=2, verbose=0):
     # Convert to tensors
     X_train = torch.from_numpy(X_train).to(torch.float)
     X_test = torch.from_numpy(X_test).to(torch.float)
-    y_train = torch.from_numpy(y_train).to(torch.float)
-    y_test = torch.from_numpy(y_test).to(torch.float)
+    # reshape -1 is a good tool to remember
+    y_train = torch.from_numpy(y_train).to(torch.float).reshape(-1,1)
+    y_test = torch.from_numpy(y_test).to(torch.float).reshape(-1,1)
 
     return  X_train, X_test, y_train, y_test
+
+
+class InsuranceDataset(Dataset):
+    def __init__(self, csv_path):
+        self.X_train, self.X_test, self.y_train, self.y_test = setup_dataset(csv_path)
+    def __gettrainitem__(self, index):
+        return self.X_train[index], self.y_train[index]
+    def __gettestitem__(self, index):
+        return self.X_test[index], self.y_test[index]
 
 
 
 if __name__ == '__main__':
     print("Usages:")
     print("X_train, X_test, y_train, y_test = setup_dataset('csv_path')")
+    X_train, X_test, y_train, y_test = setup_dataset("dataset/train.csv",verbose=0)
+
+
+    object = InsuranceDataset("dataset/insurance.csv")
+    a_sample, a_label = object.__gettrainitem__(4)
+    print(a_sample.size(), a_label.size())
+
