@@ -4,22 +4,9 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 
-filepath = 'dataset/insurance.csv'
 
-
-# def OHE(dataframe, column_to_encode):
-#     OHE = pd.get_dummies(dataframe[column_to_encode.value], prefix=column_to_encode)
-#     dataframe = pd.merge(
-#         left = dataframe,
-#         right = OHE,
-#         left_index = True,
-#         right_index = True,
-#     )
-#     dataframe = dataframe.drop(column_to_encode)
-#     return dataframe
-
-def setup_dataset(csv_path, bmi_precision=1, price_precision=2):
-    df = pd.read_csv(filepath)
+def setup_dataset(csv_path, bmi_precision=1, price_precision=2, verbose=0):
+    df = pd.read_csv(csv_path)
     # One hot encode sex and region
     OHE_sex = pd.get_dummies(df['sex'], prefix='sex')
     OHE_region = pd.get_dummies(df['region'], prefix='region')
@@ -47,11 +34,13 @@ def setup_dataset(csv_path, bmi_precision=1, price_precision=2):
 
     # Split data
     X_train, X_test, y_train, y_test = train_test_split(data, target, test_size=0.2, random_state=42)
+    if verbose:
+        print(f"Dimensions:\nX_train:{X_train.shape}\ny_train:{y_train.shape}\n","="*50,f"\nX_test:{X_test.shape}\ny_test{y_test.shape}")
 
     return  X_train, X_test, y_train, y_test
 
 
 
 if __name__ == '__main__':
-    print("Usage:")
+    print("Usages:")
     print("X_train, X_test, y_train, y_test = setup_dataset('csv_path')")

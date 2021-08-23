@@ -1,5 +1,9 @@
-from datahandler import setup_dataset
+from data_handler import setup_dataset
+import insurance_models
 
-X_train, X_test, y_train, y_test = setup_dataset("dataset/insurance.csv")
 
-print(X_test)
+X_train, X_test, y_train, y_test = setup_dataset("dataset/insurance.csv",verbose=1)
+
+# Need to train and validate
+model = insurance_models.InsurancePriceNN([128, 64])
+print(model)
