@@ -29,6 +29,7 @@ def setup_dataset(csv_path, bmi_precision=1, price_precision=2, verbose=0):
     # Seperate target from data
     target = df['charges'].round(price_precision).values
     df = df.drop(['charges'], axis=1)
+    # df.to_csv("model_data.csv")
     # print(target)
 
     # Data
