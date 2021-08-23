@@ -7,6 +7,8 @@ from sklearn.model_selection import train_test_split
 
 def setup_dataset(csv_path, bmi_precision=1, price_precision=2, verbose=0):
     df = pd.read_csv(csv_path)
+    # NAs can leave
+    df.dropna()
     # One hot encode sex and region
     OHE_sex = pd.get_dummies(df['sex'], prefix='sex')
     OHE_region = pd.get_dummies(df['region'], prefix='region')
@@ -48,12 +50,43 @@ def setup_dataset(csv_path, bmi_precision=1, price_precision=2, verbose=0):
 
 
 class InsuranceDataset(Dataset):
-    def __init__(self, csv_path):
+    def __init__(self, csv_path, train=True):
         self.X_train, self.X_test, self.y_train, self.y_test = setup_dataset(csv_path)
+        self.training_samples = len(self.X_train)
+        self.test_samples = len(self.X_test)
+        if train:
+            self.X = self.X_train
+            self.y = self.y_train
+            self.n_samples = self.training_samples
+        else:
+            self.X = self.X_test
+            self.y = self.y_test
+            self.n_samples = self.test_samples
+
+    def __gettrainlen__(self):
+        return self.training_samples
+    def __gettestlen__(self):
+        return self.test_samples
     def __gettrainitem__(self, index):
         return self.X_train[index], self.y_train[index]
     def __gettestitem__(self, index):
         return self.X_test[index], self.y_test[index]
+    def __len__(self):
+        return self.n_samples
+    def __getitem__(self, index):
+        return self.X[index], self.y[index]
+
+
+def create_loaders(data_path):
+    train_data = InsuranceDataset(data_path)
+    test_data = InsuranceDataset(data_path, train=False)
+    train_loader = DataLoader(dataset=train_data, batch_size=32, drop_last=True)
+    # train_iter = iter(train_loader)
+    test_loader = DataLoader(dataset=test_data, batch_size=32, drop_last=True)
+    # test_iter = iter(test_loader)
+    return train_loader, test_loader
+
+
 
 
 
@@ -66,4 +99,5 @@ if __name__ == '__main__':
     object = InsuranceDataset("dataset/insurance.csv")
     a_sample, a_label = object.__gettrainitem__(4)
     print(a_sample.size(), a_label.size())
-
+    sample_size = object.__gettrainlen__()
+    print(sample_size)
